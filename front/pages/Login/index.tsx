@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { Success, Form, Error, Label, Input, LinkContainer, Button, Header } from '../SignUp/style';
 import useInput from './../../hooks/useInput';
 import axios from 'axios';
@@ -7,9 +7,7 @@ import useSwr from 'swr';
 import fetcher from './../../utils/fetcher';
 
 const Login = () => {
-  const { data, error, revalidate } = useSwr('http://localhost:3095/api/users', fetcher, {
-    dedupingInterval = 2000,
-  });
+  const { data, error, revalidate } = useSwr('http://localhost:3095/api/users', fetcher);
 
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -40,6 +38,9 @@ const Login = () => {
     },
     [email, password],
   );
+  if (data) {
+    return <Redirect to="/workspace/channel" />;
+  }
 
   return (
     <div id="email-label">

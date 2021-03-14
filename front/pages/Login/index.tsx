@@ -7,7 +7,7 @@ import useSwr from 'swr';
 import fetcher from './../../utils/fetcher';
 
 const Login = () => {
-  const { data, error, revalidate } = useSwr('http://localhost:3095/api/users', fetcher);
+  const { data, error, revalidate, mutate } = useSwr('http://localhost:3095/api/users', fetcher);
 
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -29,8 +29,7 @@ const Login = () => {
           },
         )
         .then((response) => {
-          revalidate();
-          console.log(response);
+          mutate(response.data, false);
         })
         .catch((error) => {
           setLoginError(error.response?.data?.status === 401);

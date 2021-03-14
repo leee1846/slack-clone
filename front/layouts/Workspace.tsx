@@ -1,10 +1,10 @@
 import React, { useCallback, FC } from 'react';
-import useSwr from 'swr';
+import useSwr, { mutate } from 'swr';
 import fetcher from './../utils/fetcher';
 import axios from 'axios';
 import { Redirect } from 'react-router';
 
-const Workspace: FC = ({ children }: any) => {
+const Workspace = ({ children }: any) => {
   const { data, error, revalidate } = useSwr('http://localhost:3095/api/users', fetcher);
 
   const onLogout = useCallback(() => {
@@ -13,8 +13,8 @@ const Workspace: FC = ({ children }: any) => {
         withCredentials: true,
       })
       .then((response) => {
-        revalidate();
-        console.log(response);
+        console.log(response.data);
+        mutate('http://localhost:3095/api/users', false, false);
       })
       .catch((error) => {});
   }, []);

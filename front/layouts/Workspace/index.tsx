@@ -2,7 +2,7 @@ import React, { useCallback, FC } from 'react';
 import useSwr, { mutate } from 'swr';
 import fetcher from '../../utils/fetcher';
 import axios from 'axios';
-import { Redirect } from 'react-router';
+import { Redirect, Switch, Route } from 'react-router';
 import {
   AddButton,
   Channels,
@@ -20,6 +20,11 @@ import {
   WorkspaceWrapper,
 } from './styles';
 import gravatar from 'gravatar';
+import loadable from '@loadable/component';
+import Menu from '../../components/Menu';
+
+const DirectMessage = loadable(() => import('./../../pages/DirectMessage/index'));
+const Channel = loadable(() => import('./../../pages/Channel/index'));
 
 const Workspace = ({ children }: any) => {
   const { data, error, revalidate } = useSwr('http://localhost:3095/api/users', fetcher);
@@ -36,6 +41,8 @@ const Workspace = ({ children }: any) => {
       .catch((error) => {});
   }, []);
 
+  const onClickUserProfile = () => {};
+
   if (!data) {
     return <Redirect to="/login" />;
   }
@@ -44,19 +51,20 @@ const Workspace = ({ children }: any) => {
     <div>
       <Header>
         <RightMenu>
-          <span>
-            <ProfileImg src={gravatar.url(data.email, { s: '28px', d: 'retro' })} alt={data.nickname}></ProfileImg>
+          <span onClick={onClickUserProfile}>
+            <ProfileImg src={gravatar.url(data.email, { s: '28px', d: 'retro' })} alt={data.nickname} />
+            <Menu>프로필메뉴</Menu>
           </span>
         </RightMenu>
       </Header>
-      <button onClick={onLogout}>로그아웃</button>
+      <LogOutButton onClick={onLogout}>로그아웃</LogOutButton>
       <WorkspaceWrapper>
         <Workspaces>test</Workspaces>
         <Channels>
           <WorkspaceName>Sleact</WorkspaceName>
           <MenuScroll>scroll</MenuScroll>
         </Channels>
-        <Chats>chat</Chats>
+        <Chats>{children}</Chats>
       </WorkspaceWrapper>
     </div>
   );

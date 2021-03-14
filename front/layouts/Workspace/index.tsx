@@ -1,8 +1,25 @@
 import React, { useCallback, FC } from 'react';
 import useSwr, { mutate } from 'swr';
-import fetcher from './../utils/fetcher';
+import fetcher from '../../utils/fetcher';
 import axios from 'axios';
 import { Redirect } from 'react-router';
+import {
+  AddButton,
+  Channels,
+  Chats,
+  Header,
+  LogOutButton,
+  MenuScroll,
+  ProfileImg,
+  ProfileModal,
+  RightMenu,
+  WorkspaceButton,
+  WorkspaceModal,
+  WorkspaceName,
+  Workspaces,
+  WorkspaceWrapper,
+} from './styles';
+import gravatar from 'gravatar';
 
 const Workspace = ({ children }: any) => {
   const { data, error, revalidate } = useSwr('http://localhost:3095/api/users', fetcher);
@@ -25,8 +42,22 @@ const Workspace = ({ children }: any) => {
 
   return (
     <div>
+      <Header>
+        <RightMenu>
+          <span>
+            <ProfileImg src={gravatar.url(data.email, { s: '28px', d: 'retro' })} alt={data.nickname}></ProfileImg>
+          </span>
+        </RightMenu>
+      </Header>
       <button onClick={onLogout}>로그아웃</button>
-      {children}
+      <WorkspaceWrapper>
+        <Workspaces>test</Workspaces>
+        <Channels>
+          <WorkspaceName>Sleact</WorkspaceName>
+          <MenuScroll>scroll</MenuScroll>
+        </Channels>
+        <Chats>chat</Chats>
+      </WorkspaceWrapper>
     </div>
   );
 };

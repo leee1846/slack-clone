@@ -1,10 +1,13 @@
 import React from 'react';
 import Workspace from '../../layouts/Workspace';
+import { Container, Header, DragOver } from './style';
 
 const Channel = () => {
   return (
     <Workspace>
-      <div>로그인 성공</div>
+      <Container>
+        
+      </Container>
     </Workspace>
   );
 };

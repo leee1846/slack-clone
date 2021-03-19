@@ -26,6 +26,7 @@ import Menu from '../../components/Menu';
 import { Link } from 'react-router-dom';
 import { IUser } from '../../typings/db';
 import Modal from './../../components/Modal';
+import { toast } from 'react-toastify';
 
 const DirectMessage = loadable(() => import('./../../pages/DirectMessage/index'));
 const Channel = loadable(() => import('./../../pages/Channel/index'));
@@ -57,13 +58,42 @@ const Workspace = ({ children }: any) => {
 
   const onClickCreateWorkspace = () => {
     setShowCreateWorkspaceModal(true);
-    console.log(showCreateWorkspaceModal);
   };
+
+  const onCreateWorkspace = useCallback(
+    (e) => {
+      e.stopPropagation();
+      if (!newWorkspace || !newWorkspace.trim()) return;
+      if (!newUrl || !newUrl.trim()) return;
+
+      axios
+        .post(
+          'http://localhost:3095/api/workspaces',
+          {
+            workspace: newWorkspace,
+            url: newUrl,
+          },
+          {
+            withCredentials: true,
+          },
+        )
+        .then(() => {
+          revalidate();
+          setShowCreateWorkspaceModal(false);
+          setNewWorkspace('');
+          setNewUrl('');
+        })
+        .catch((error) => {
+          console.dir(error);
+          toast.error(error.response?.data, { position: 'bottom-center' });
+        });
+    },
+    [newWorkspace, newUrl],
+  );
 
   const onCloseModal = useCallback(() => {
     setShowCreateWorkspaceModal(false);
   }, []);
-  const onCreateWorkspace = useCallback(() => {}, []);
 
   if (!data) {
     return <Redirect to="/login" />;

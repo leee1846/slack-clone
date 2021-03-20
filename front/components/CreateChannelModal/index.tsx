@@ -5,6 +5,9 @@ import useInput from './../../hooks/useInput';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import useSwr from 'swr';
+import { IUser, IChannel } from '../../typings/db';
+import fetcher from '../../utils/fetcher';
 
 interface Props {
   show: boolean;
@@ -15,6 +18,14 @@ interface Props {
 const CreateChannelModal: VFC<Props> = ({ show, onCloseModal, setShowCreateChannelModal }) => {
   const { workspace } = useParams<{ workspace: string }>();
   const [newChannel, onChangeNewChannel, setNewChannel] = useInput('');
+
+  const { data, error, revalidate } = useSwr<IUser | false>('http://localhost:3095/api/users', fetcher, {
+    dedupingInterval: 2000,
+  });
+  const { data: channelData, revalidate: revalidateChannel } = useSwr<IChannel[]>(
+    data ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
+    fetcher,
+  );
 
   const onCreateChannel = useCallback(
     (e) => {
@@ -31,6 +42,7 @@ const CreateChannelModal: VFC<Props> = ({ show, onCloseModal, setShowCreateChann
         )
         .then(() => {
           setShowCreateChannelModal(false);
+          revalidateChannel();
           setNewChannel('');
         })
         .catch((error) => {

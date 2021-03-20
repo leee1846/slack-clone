@@ -3,13 +3,7 @@ import Workspace from '../../layouts/Workspace';
 import { Container, Header, DragOver } from './style';
 
 const Channel = () => {
-  return (
-    <Workspace>
-      <Container>
-        
-      </Container>
-    </Workspace>
-  );
+  return <Container>sssss</Container>;
 };
 
 export default Channel;

@@ -23,24 +23,34 @@ import {
 import gravatar from 'gravatar';
 import loadable from '@loadable/component';
 import Menu from '../../components/Menu';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { IUser } from '../../typings/db';
 import Modal from './../../components/Modal';
 import { toast } from 'react-toastify';
-
-const DirectMessage = loadable(() => import('./../../pages/DirectMessage/index'));
-const Channel = loadable(() => import('./../../pages/Channel/index'));
 import useInput from './../../hooks/useInput';
 import CreateChannelModal from './../../components/CreateChannelModal/index';
+import { IChannel } from '../../typings/db';
 
 const Workspace: FC = ({ children }) => {
+  const DirectMessage = loadable(() => import('./../../pages/DirectMessage/index'));
+  const Channel = loadable(() => import('./../../pages/Channel/index'));
+
+  const { workspace } = useParams<{ workspace: string }>();
+
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
   const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
   const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
   const [newWorkspace, onChangeNewWorkspace, setNewWorkspace] = useInput('');
   const [newUrl, onChangeNewUrl, setNewUrl] = useInput('');
-  const { data, error, revalidate } = useSwr<IUser | false>('http://localhost:3095/api/users', fetcher);
+
+  const { data, error, revalidate } = useSwr<IUser | false>('http://localhost:3095/api/users', fetcher, {
+    dedupingInterval: 2000,
+  });
+  const { data: channelData } = useSwr<IChannel[]>(
+    data ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
+    fetcher,
+  );
 
   const onLogout = useCallback(() => {
     axios
@@ -126,7 +136,6 @@ const Workspace: FC = ({ children }) => {
                     <span id="profile-active">Active</span>
                   </div>
                 </ProfileModal>
-                {/* <LogOutButton onClick={onLogout}>로그아웃</LogOutButton> */}
               </Menu>
             )}
           </span>
@@ -154,9 +163,17 @@ const Workspace: FC = ({ children }) => {
                 <button onClick={onLogout}>로그아웃</button>
               </WorkspaceModal>
             </Menu>
+            {channelData?.map((v) => (
+              <div>{v.name}</div>
+            ))}
           </MenuScroll>
         </Channels>
-        <Chats>{children}</Chats>
+        <Chats>
+          <Switch>
+            <Route path="/workspace/:workspace/channel/:channel" component={Channel} />
+            <Route path="/workspace/:workspace/dm/:id" component={DirectMessage} />
+          </Switch>
+        </Chats>
       </WorkspaceWrapper>
       <Modal show={showCreateWorkspaceModal} onCloseModal={onCloseModal}>
         <form onSubmit={onCreateWorkspace}>
@@ -171,7 +188,11 @@ const Workspace: FC = ({ children }) => {
           <Button type="submit">생성하기</Button>
         </form>
       </Modal>
-      <CreateChannelModal show={showCreateChannelModal} onCloseModal={onCloseModal} />
+      <CreateChannelModal
+        show={showCreateChannelModal}
+        onCloseModal={onCloseModal}
+        setShowCreateChannelModal={setShowCreateChannelModal}
+      />
     </div>
   );
 };

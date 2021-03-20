@@ -38,7 +38,7 @@ const Login = () => {
     [email, password],
   );
   if (data) {
-    return <Redirect to="/workspace/channel" />;
+    return <Redirect to="/workspace/sleact/channel/go" />;
   }
 
   return (

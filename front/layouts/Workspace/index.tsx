@@ -51,6 +51,7 @@ const Workspace: FC = ({ children }) => {
     data ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
     fetcher,
   );
+  console.log(data);
 
   const onLogout = useCallback(() => {
     axios
@@ -163,7 +164,7 @@ const Workspace: FC = ({ children }) => {
                 <button onClick={onLogout}>로그아웃</button>
               </WorkspaceModal>
             </Menu>
-            {channelData?.map((v) => (
+            {data.Workspaces?.map((v) => (
               <div>{v.name}</div>
             ))}
           </MenuScroll>

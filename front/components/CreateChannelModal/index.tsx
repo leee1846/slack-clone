@@ -19,11 +19,11 @@ const CreateChannelModal: VFC<Props> = ({ show, onCloseModal, setShowCreateChann
   const { workspace } = useParams<{ workspace: string }>();
   const [newChannel, onChangeNewChannel, setNewChannel] = useInput('');
 
-  const { data, error, revalidate } = useSwr<IUser | false>('http://localhost:3095/api/users', fetcher, {
+  const { data, error, revalidate } = useSwr<IUser | false>('/api/users', fetcher, {
     dedupingInterval: 2000,
   });
   const { data: channelData, revalidate: revalidateChannel } = useSwr<IChannel[]>(
-    data ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
+    data ? `/api/workspaces/${workspace}/channels` : null,
     fetcher,
   );
 
@@ -32,7 +32,7 @@ const CreateChannelModal: VFC<Props> = ({ show, onCloseModal, setShowCreateChann
       e.preventDefault();
       axios
         .post(
-          `http://localhost:3095/api/workspaces/${workspace}/channels`,
+          `/api/workspaces/${workspace}/channels`,
           {
             name: newChannel,
           },

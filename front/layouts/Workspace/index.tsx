@@ -32,6 +32,8 @@ import CreateChannelModal from './../../components/CreateChannelModal/index';
 import { IChannel } from '../../typings/db';
 import InviteWorkspaceModal from '../../components/InviteWorkspaceModal';
 import InviteChannelModal from './../../components/InviteChannelModal/index';
+import DMList from '../../components/DMList/index';
+import ChannelList from '../../components/ChannelList/index';
 
 const Workspace: FC = ({ children }) => {
   const DirectMessage = loadable(() => import('./../../pages/DirectMessage/index'));
@@ -124,7 +126,9 @@ const Workspace: FC = ({ children }) => {
     setShowCreateChannelModal(true);
   }, []);
 
-  const onClickInviteWorkspace = useCallback(() => {}, []);
+  const onClickInviteWorkspace = useCallback(() => {
+    setShowInviteWorkspaceModal(true);
+  }, []);
 
   if (!data) {
     return <Redirect to="/login" />;
@@ -173,9 +177,8 @@ const Workspace: FC = ({ children }) => {
                 <button onClick={onLogout}>로그아웃</button>
               </WorkspaceModal>
             </Menu>
-            {data.Workspaces?.map((v) => (
-              <div>{v.name}</div>
-            ))}
+            <ChannelList />
+            <DMList />
           </MenuScroll>
         </Channels>
         <Chats>

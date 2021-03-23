@@ -11,7 +11,9 @@ const ChatBox: VFC<Props> = ({ chat }) => {
   return (
     <ChatArea>
       <Form onSubmit={onSubmitForm}>
-        <MentionsTextarea />
+        <MentionsTextarea>
+          <textarea />
+        </MentionsTextarea>
         <Toolbox>
           <SendButton
             className={

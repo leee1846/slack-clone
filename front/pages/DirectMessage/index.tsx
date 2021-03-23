@@ -5,6 +5,7 @@ import useSwr from 'swr';
 import fetcher from '../../utils/fetcher';
 import { useParams } from 'react-router-dom';
 import ChatBox from './../../components/ChatBox/index';
+import ChatList from './../../components/ChatList/index';
 
 const DirectMessage = () => {
   const { workspace, id } = useParams<{ workspace: string; id: string }>();
@@ -21,7 +22,7 @@ const DirectMessage = () => {
       <Header>
         <img src={gravatar.url(userData.email, { s: '24px', d: 'retro' })} alt={userData.nuickname} />
       </Header>
-      {/* <ChatList /> */}
+      <ChatList />
       <ChatBox chat="" />
     </Container>
   );

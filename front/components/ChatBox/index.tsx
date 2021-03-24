@@ -1,19 +1,40 @@
-import React, { VFC } from 'react';
+import React, { VFC, useCallback, useEffect, useRef } from 'react';
 import { ChatArea, Form, MentionsTextarea, Toolbox, SendButton } from './styles';
-
+import autosize from 'autosize';
 interface Props {
   chat: string;
+  onSubmitForm: (e: any) => void;
+  onSubmitChat: (e: any) => void;
+  placeholder?: string;
 }
 
-const ChatBox: VFC<Props> = ({ chat }) => {
-  const onSubmitForm = () => {};
+const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onSubmitChat, placeholder }) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      autosize(textareaRef.current);
+    }
+  }, []);
+
+  const onKeyDown = useCallback((e) => {
+    if (e.key === 'Enter') {
+      if (!e.shiftKey) {
+        onSubmitForm(e);
+      }
+    }
+  }, []);
 
   return (
     <ChatArea>
       <Form onSubmit={onSubmitForm}>
-        <MentionsTextarea>
-          <textarea />
-        </MentionsTextarea>
+        <MentionsTextarea
+          value={chat}
+          onChange={onSubmitChat}
+          onKeyDown={onKeyDown}
+          placeholder={placeholder}
+          ref={textareaRef}
+        />
         <Toolbox>
           <SendButton
             className={

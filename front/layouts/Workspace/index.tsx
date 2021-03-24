@@ -57,7 +57,6 @@ const Workspace: FC = ({ children }) => {
     data ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
     fetcher,
   );
-  console.log(data);
 
   const onLogout = useCallback(() => {
     axios

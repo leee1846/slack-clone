@@ -36,12 +36,10 @@ const ChannelList: FC = () => {
   );
 
   useEffect(() => {
-    console.log('ChannelList: workspace 바꼈다', workspace, location.pathname);
     setCountList({});
   }, [workspace, location]);
 
   const onMessage = (data: IChat) => {
-    console.log('message 왔다', data);
     const mentions: string[] | null = data.content.match(/@\[(.+?)]\((\d)\)/g);
     if (mentions?.find((v) => v.match(/@\[(.+?)]\((\d)\)/)![2] === userData?.id.toString())) {
       return setCountList((list) => {

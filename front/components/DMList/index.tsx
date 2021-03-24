@@ -38,7 +38,6 @@ const DMList: FC = () => {
   );
 
   const onMessage = (data: IDM) => {
-    console.log('dm왔다', data);
     setCountList((list) => {
       return {
         ...list,
@@ -48,7 +47,6 @@ const DMList: FC = () => {
   };
 
   useEffect(() => {
-    console.log('DMList: workspace 바꼈다', workspace);
     setOnlineList([]);
     setCountList({});
   }, [workspace]);

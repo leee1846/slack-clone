@@ -6,7 +6,7 @@ const backUrl = `http://localhost:3095`;
 
 const sockets: { [key: string]: SocketIOClient.Socket } = {};
 
-const useSocket = (workspace: string) => {
+const useSocket = (workspace?: string): [SocketIOClient.Socket | undefined, () => void] => {
   const disconnect = useCallback(() => {
     if (workspace) {
       sockets[workspace].disconnect();

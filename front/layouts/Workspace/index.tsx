@@ -1,4 +1,4 @@
-import React, { useCallback, FC, useState } from 'react';
+import React, { useCallback, FC, useState, useEffect } from 'react';
 import useSwr, { mutate } from 'swr';
 import fetcher from '../../utils/fetcher';
 import axios from 'axios';
@@ -34,6 +34,7 @@ import InviteWorkspaceModal from '../../components/InviteWorkspaceModal';
 import InviteChannelModal from './../../components/InviteChannelModal/index';
 import DMList from '../../components/DMList/index';
 import ChannelList from '../../components/ChannelList/index';
+import useSocket from './../../hooks/useSocket';
 
 const Workspace: FC = ({ children }) => {
   const DirectMessage = loadable(() => import('./../../pages/DirectMessage/index'));
@@ -57,6 +58,23 @@ const Workspace: FC = ({ children }) => {
     data ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
     fetcher,
   );
+
+  const [socket, disconnect] = useSocket(workspace);
+
+  useEffect(() => {
+    if (channelData && data && socket) {
+      console.log(socket);
+      socket.emit('login', {
+        id: data.id,
+        channels: channelData.map((channel) => channel.id),
+      });
+    }
+  }, [socket, data, channelData]);
+  useEffect(() => {
+    return () => {
+      disconnect();
+    };
+  }, [workspace, disconnect]);
 
   const onLogout = useCallback(() => {
     axios

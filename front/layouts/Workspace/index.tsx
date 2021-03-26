@@ -70,6 +70,7 @@ const Workspace: FC = ({ children }) => {
       });
     }
   }, [socket, data, channelData]);
+
   useEffect(() => {
     return () => {
       disconnect();

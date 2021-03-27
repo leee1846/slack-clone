@@ -21,6 +21,7 @@
     "autosize": "^4.0.2",
     "axios": "^0.21.1",
     "cross-env": "^7.0.3",
+    "dayjs": "^1.10.4",
     "gravatar": "^1.8.1",
     "react": "^17.0.1",
     "react-custom-scrollbars": "^4.2.1",

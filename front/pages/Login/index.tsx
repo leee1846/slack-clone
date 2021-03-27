@@ -29,7 +29,7 @@ const Login = () => {
           },
         )
         .then((response) => {
-          mutate(response.data, false);
+          revalidate();
         })
         .catch((error) => {
           setLoginError(error.response?.data?.status === 401);

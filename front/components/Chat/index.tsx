@@ -1,16 +1,39 @@
-import React, { FC } from 'react';
-import { IDM } from '../../typings/db';
-import { ChatWrapper } from './styles';
+import { ChatWrapper } from '../Chat/styles';
+import { IDM, IChat } from '../../typings/db';
+import React, { VFC, memo, useMemo } from 'react';
 import gravatar from 'gravatar';
 import dayjs from 'dayjs';
+import regexifyString from 'regexify-string';
+import { Link, useParams } from 'react-router-dom';
 
 interface Props {
-  data: IDM;
+  data: IDM | IChat;
 }
 
-const Chat: FC<Props> = ({ data }) => {
-  const user = data.Sender;
+const Chat: VFC<Props> = ({ data }) => {
+  const { workspace } = useParams<{ workspace: string; channel: string }>();
+  const user = 'Sender' in data ? data.Sender : data.User;
 
+  const result = useMemo(
+    () =>
+      regexifyString({
+        input: data.content,
+        pattern: /@\[(.+?)]\((\d+?)\)|\n/g,
+        decorator(match, index) {
+          const arr: string[] | null = match.match(/@\[(.+?)]\((\d+?)\)/)!;
+          if (arr) {
+            return (
+              <Link key={match + index} to={`/workspace/${workspace}/dm/${arr[2]}`}>
+                @{arr[1]}
+              </Link>
+            );
+          }
+          return <br key={index} />;
+        },
+      }),
+    [data.content],
+  );
+  console.log(user.nickname);
   return (
     <ChatWrapper>
       <div className="chat-img">
@@ -21,10 +44,10 @@ const Chat: FC<Props> = ({ data }) => {
           <b>{user.nickname}</b>
           <span>{dayjs(data.createdAt).format('h:mm A')}</span>
         </div>
-        <p>{data.content}</p>
+        <p>{result}</p>
       </div>
     </ChatWrapper>
   );
 };
 
-export default Chat;
+export default memo(Chat);

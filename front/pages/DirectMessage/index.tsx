@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import gravatar from 'gravatar';
 import { Header, Container } from './styles';
 import useSwr from 'swr';
@@ -11,6 +11,7 @@ import axios from 'axios';
 import makeSection from './../../utils/makeSection';
 
 const DirectMessage = () => {
+  const scrollbarRef = useRef(null);
   const { workspace, id } = useParams<{ workspace: string; id: string }>();
   const { data: userData } = useSwr(`/api/workspaces/${workspace}/users/${id}`, fetcher);
   const { data: myData } = useSwr(`/api/users`, fetcher);
@@ -50,7 +51,7 @@ const DirectMessage = () => {
       <Header>
         <img src={gravatar.url(userData.email, { s: '24px', d: 'retro' })} alt={userData.nuickname} />
       </Header>
-      <ChatList chatSections={chatSections} />
+      <ChatList chatSections={chatSections} ref={scrollbarRef} />
       <ChatBox chat={chat} onSubmitChat={onChangeChat} onSubmitForm={onSubmitForm} />
     </Container>
   );

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useRef } from 'react';
+import React, { FC, useCallback, useRef, forwardRef } from 'react';
 import { IChat, IDM } from '../../typings/db';
 import { ChatZone, Section, StickyHeader } from './styles';
 import Chat from './../Chat/index';
@@ -8,13 +8,16 @@ interface Props {
   chatSections?: { [key: string]: (IDM | IChat)[] };
 }
 
-const ChatList: FC<Props> = ({ chatSections }) => {
-  const scrollbarRef = useRef(null);
-  const onScroll = useCallback(() => {}, []);
+const ChatList = forwardRef<Scrollbars, Props>(({ chatSections }, ref) => {
+  const onScroll = useCallback((values) => {
+    if (values.scrollTop === 0) {
+      console.log('가장위');
+    }
+  }, []);
 
   return (
     <ChatZone>
-      <Scrollbars autoHide ref={scrollbarRef} onScrollFrame={onScroll}>
+      <Scrollbars autoHide ref={ref} onScrollFrame={onScroll}>
         {chatSections &&
           Object.entries(chatSections).map(([date, chats]) => {
             return (
@@ -31,6 +34,6 @@ const ChatList: FC<Props> = ({ chatSections }) => {
       </Scrollbars>
     </ChatZone>
   );
-};
+});
 
 export default ChatList;

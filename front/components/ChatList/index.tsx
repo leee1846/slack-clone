@@ -6,18 +6,24 @@ import { Scrollbars } from 'react-custom-scrollbars';
 
 interface Props {
   chatSections?: { [key: string]: (IDM | IChat)[] };
+  setSize: (size: number | ((size: number) => number)) => Promise<any[] | undefined>;
+  isReachingEnd: boolean | undefined;
+  scrollbarRef: React.MutableRefObject<null>;
 }
 
-const ChatList = forwardRef<Scrollbars, Props>(({ chatSections }, ref) => {
+const ChatList: FC<Props> = ({ chatSections, setSize, isReachingEnd, scrollbarRef }) => {
   const onScroll = useCallback((values) => {
-    if (values.scrollTop === 0) {
+    if (values.scrollTop === 0 && !isReachingEnd) {
       console.log('가장위');
+      setSize((prevSize) => prevSize + 1).then(() => {
+        console.log('성공');
+      });
     }
   }, []);
 
   return (
     <ChatZone>
-      <Scrollbars autoHide ref={ref} onScrollFrame={onScroll}>
+      <Scrollbars autoHide ref={scrollbarRef} onScrollFrame={onScroll}>
         {chatSections &&
           Object.entries(chatSections).map(([date, chats]) => {
             return (
@@ -34,6 +40,6 @@ const ChatList = forwardRef<Scrollbars, Props>(({ chatSections }, ref) => {
       </Scrollbars>
     </ChatZone>
   );
-});
+};
 
 export default ChatList;

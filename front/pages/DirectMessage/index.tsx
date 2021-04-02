@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import gravatar from 'gravatar';
 import { Header, Container } from './styles';
 import useSwr, { useSWRInfinite } from 'swr';
@@ -12,7 +12,7 @@ import makeSection from './../../utils/makeSection';
 import { IDM } from '../../typings/db';
 
 const DirectMessage = () => {
-  const scrollbarRef = useRef(null);
+  const scrollbarRef = useRef<any>(null);
   const { workspace, id } = useParams<{ workspace: string; id: string }>();
   const { data: userData } = useSwr(`/api/workspaces/${workspace}/users/${id}`, fetcher);
   const { data: myData } = useSwr(`/api/users`, fetcher);
@@ -20,7 +20,7 @@ const DirectMessage = () => {
     (index) => `/api/workspaces/${workspace}/dms/${id}/chats?perPage=20&page=${index + 1}`,
     fetcher,
   );
-  const isEmpty = chatData?.[0]?.length === 0;
+  const isEmpty = chatData?.[chatData.length - 1]?.length === 0;
   const isReachingEnd = isEmpty || (chatData && chatData[chatData.length - 1]?.length < 20) || false;
 
   const [chat, onChangeChat, setChat] = useInput('');
@@ -43,6 +43,13 @@ const DirectMessage = () => {
     [chat],
   );
 
+  //로딩시 스크롤바 제일 아래로
+  useEffect(() => {
+    if (chatData?.length === 1) {
+      scrollbarRef.current?.scrollToBottom();
+    }
+  }, [chatData]);
+
   if (!userData || !myData) {
     return null;
   }
@@ -54,12 +61,7 @@ const DirectMessage = () => {
       <Header>
         <img src={gravatar.url(userData.email, { s: '24px', d: 'retro' })} alt={userData.nuickname} />
       </Header>
-      <ChatList
-        chatSections={chatSections}
-        scrollbarRef={scrollbarRef}
-        setSize={setSize}
-        isReachingEnd={isReachingEnd}
-      />
+      <ChatList chatSections={chatSections} ref={scrollbarRef} setSize={setSize} isReachingEnd={isReachingEnd} />
       <ChatBox chat={chat} onSubmitChat={onChangeChat} onSubmitForm={onSubmitForm} />
     </Container>
   );

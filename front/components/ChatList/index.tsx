@@ -8,13 +8,12 @@ interface Props {
   chatSections?: { [key: string]: (IDM | IChat)[] };
   setSize: (size: number | ((size: number) => number)) => Promise<any[] | undefined>;
   isReachingEnd: boolean | undefined;
-  scrollbarRef: React.MutableRefObject<null>;
 }
 
-const ChatList: FC<Props> = ({ chatSections, setSize, isReachingEnd, scrollbarRef }) => {
+const ChatList = forwardRef<Scrollbars, Props>(({ chatSections, setSize, isReachingEnd }, ref) => {
   const onScroll = useCallback((values) => {
     if (values.scrollTop === 0 && !isReachingEnd) {
-      console.log('가장위');
+      console.log(isReachingEnd);
       setSize((prevSize) => prevSize + 1).then(() => {
         console.log('성공');
       });
@@ -23,7 +22,7 @@ const ChatList: FC<Props> = ({ chatSections, setSize, isReachingEnd, scrollbarRe
 
   return (
     <ChatZone>
-      <Scrollbars autoHide ref={scrollbarRef} onScrollFrame={onScroll}>
+      <Scrollbars autoHide ref={ref} onScrollFrame={onScroll}>
         {chatSections &&
           Object.entries(chatSections).map(([date, chats]) => {
             return (
@@ -40,6 +39,6 @@ const ChatList: FC<Props> = ({ chatSections, setSize, isReachingEnd, scrollbarRe
       </Scrollbars>
     </ChatZone>
   );
-};
+});
 
 export default ChatList;

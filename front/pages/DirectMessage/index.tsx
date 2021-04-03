@@ -36,6 +36,8 @@ const DirectMessage = () => {
           .then(() => {
             revalidate();
             setChat('');
+            //채팅한후에 스크롤 아래로
+            scrollbarRef.current.scrollToBottom();
           })
           .catch((error) => console.log(error));
       }
@@ -53,7 +55,7 @@ const DirectMessage = () => {
   if (!userData || !myData) {
     return null;
   }
-
+  //배열 위에서 아래로 변경하기
   const chatSections = makeSection(chatData ? [...chatData].flat().reverse() : []);
 
   return (

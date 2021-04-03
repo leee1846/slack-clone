@@ -13,10 +13,7 @@ interface Props {
 const ChatList = forwardRef<Scrollbars, Props>(({ chatSections, setSize, isReachingEnd }, ref) => {
   const onScroll = useCallback((values) => {
     if (values.scrollTop === 0 && !isReachingEnd) {
-      console.log(isReachingEnd);
-      setSize((prevSize) => prevSize + 1).then(() => {
-        console.log('성공');
-      });
+      setSize((prevSize) => prevSize + 1).then(() => {});
     }
   }, []);
 

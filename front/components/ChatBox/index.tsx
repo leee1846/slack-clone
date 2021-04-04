@@ -10,11 +10,11 @@ import gravatar from 'gravatar';
 interface Props {
   chat: string;
   onSubmitForm: (e: any) => void;
-  onSubmitChat: (e: any) => void;
+  onChangeChat: (e: any) => void;
   placeholder?: string;
 }
 
-const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onSubmitChat, placeholder }) => {
+const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onChangeChat, placeholder }) => {
   const { workspace } = useParams<{ workspace: string }>();
 
   const { data: userData, error, revalidate } = useSwr<IUser | false>('http://localhost:3095/api/users', fetcher, {
@@ -22,6 +22,7 @@ const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onSubmitChat, placeholder }) 
   });
 
   const { data: memberData } = useSwr<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -30,13 +31,17 @@ const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onSubmitChat, placeholder }) 
     }
   }, []);
 
-  const onKeyDown = useCallback((e) => {
-    if (e.key === 'Enter') {
-      if (!e.shiftKey) {
-        onSubmitForm(e);
+  const onKeyDown = useCallback(
+    (e) => {
+      if (e.key === 'Enter') {
+        if (!e.shiftKey) {
+          e.preventDefault();
+          onSubmitForm(e);
+        }
       }
-    }
-  }, []);
+    },
+    [onSubmitForm],
+  );
 
   const renderSuggestion = useCallback(
     (
@@ -57,7 +62,7 @@ const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onSubmitChat, placeholder }) 
         </EachMention>
       );
     },
-    [],
+    [memberData],
   );
 
   return (
@@ -66,7 +71,7 @@ const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onSubmitChat, placeholder }) 
         <MentionsTextarea
           id="editor-chat"
           value={chat}
-          onChange={onSubmitChat}
+          onChange={onChangeChat}
           onKeyDown={onKeyDown}
           placeholder={placeholder}
           inputRef={textareaRef}
@@ -81,6 +86,7 @@ const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onSubmitChat, placeholder }) 
         </MentionsTextarea>
         <Toolbox>
           <SendButton
+            type="submit"
             className={
               'c-button-unstyled c-icon_button c-icon_button--light c-icon_button--size_medium c-texty_input__button c-texty_input__button--send' +
               (chat?.trim() ? '' : ' c-texty_input__button--disabled')
@@ -88,7 +94,6 @@ const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onSubmitChat, placeholder }) 
             data-qa="texty_send_button"
             aria-label="Send message"
             data-sk="tooltip_parent"
-            type="submit"
             disabled={!chat?.trim()}
           >
             <i className="c-icon c-icon--paperplane-filled" aria-hidden="true" />

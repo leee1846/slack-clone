@@ -25,24 +25,38 @@ const DirectMessage = () => {
 
   const [chat, onChangeChat, setChat] = useInput('');
 
+  console.log(chatData);
   const onSubmitForm = useCallback(
-    (e) => {
+    (e: HTMLFormElement) => {
       e.preventDefault();
-      if (!chat.trim()) {
+      if (chat?.trim() && chatData) {
+        const savedChat = chat;
+        mutateChat((prevChatData) => {
+          prevChatData?.[0].unshift({
+            id: (chatData[0][0]?.id || 0) + 1,
+            content: savedChat,
+            SenderId: myData.id,
+            Sender: myData,
+            ReceiverId: userData.id,
+            Receiver: userData,
+            createdAt: new Date(),
+          });
+          return prevChatData;
+        }, false).then(() => {
+          setChat('');
+          scrollbarRef.current?.scrollToBottom();
+        });
         axios
           .post(`/api/workspaces/${workspace}/dms/${id}/chats`, {
             content: chat,
           })
           .then(() => {
             revalidate();
-            setChat('');
-            //채팅한후에 스크롤 아래로
-            scrollbarRef.current.scrollToBottom();
           })
-          .catch((error) => console.log(error));
+          .catch(console.error);
       }
     },
-    [chat],
+    [chat, chatData, myData, userData, workspace, id],
   );
 
   //로딩시 스크롤바 제일 아래로
@@ -64,7 +78,7 @@ const DirectMessage = () => {
         <img src={gravatar.url(userData.email, { s: '24px', d: 'retro' })} alt={userData.nuickname} />
       </Header>
       <ChatList chatSections={chatSections} ref={scrollbarRef} setSize={setSize} isReachingEnd={isReachingEnd} />
-      <ChatBox chat={chat} onSubmitChat={onChangeChat} onSubmitForm={onSubmitForm} />
+      <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm} />
     </Container>
   );
 };

@@ -17,7 +17,7 @@ const Channel = () => {
     <Container>
       <Header>채널!</Header>
       {/* <ChatList /> */}
-      <ChatBox chat={chat} onSubmitChat={onChangeChat} onSubmitForm={onSubmitForm} />
+      <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm} />
     </Container>
   );
 };

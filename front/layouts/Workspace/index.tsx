@@ -63,7 +63,6 @@ const Workspace: FC = ({ children }) => {
 
   useEffect(() => {
     if (channelData && data && socket) {
-      console.log(socket);
       socket.emit('login', {
         id: data.id,
         channels: channelData.map((channel) => channel.id),
@@ -83,7 +82,6 @@ const Workspace: FC = ({ children }) => {
         withCredentials: true,
       })
       .then((response) => {
-        console.log(response.data);
         mutate('http://localhost:3095/api/users', false, false);
       })
       .catch((error) => {});

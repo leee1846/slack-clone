@@ -47,7 +47,6 @@ const SignUp = () => {
           })
           .then((response) => {
             setSignUpSuccess(true);
-            console.log(response);
           })
           .catch((error) => {
             setSignUpError(error.response.data);

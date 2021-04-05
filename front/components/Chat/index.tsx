@@ -33,7 +33,6 @@ const Chat: VFC<Props> = ({ data }) => {
       }),
     [data.content],
   );
-  console.log(user.nickname);
   return (
     <ChatWrapper>
       <div className="chat-img">

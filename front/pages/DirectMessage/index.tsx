@@ -25,7 +25,6 @@ const DirectMessage = () => {
 
   const [chat, onChangeChat, setChat] = useInput('');
 
-  console.log(chatData);
   const onSubmitForm = useCallback(
     (e: HTMLFormElement) => {
       e.preventDefault();
@@ -77,7 +76,7 @@ const DirectMessage = () => {
       <Header>
         <img src={gravatar.url(userData.email, { s: '24px', d: 'retro' })} alt={userData.nuickname} />
       </Header>
-      <ChatList chatSections={chatSections} ref={scrollbarRef} setSize={setSize} isReachingEnd={isReachingEnd} />
+      <ChatList chatSections={chatSections} scrollRef={scrollbarRef} setSize={setSize} isReachingEnd={isReachingEnd} />
       <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm} />
     </Container>
   );
